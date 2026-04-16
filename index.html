@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Champions Club – Healthy Friday Drive</title>
+    <title>Healthy Friday Drive - Patiala</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -71,24 +71,6 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Criteria Met</label>
-                <select id="nliType" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="" disabled selected>Select Criteria</option>
-                    <option value="NLI + LI Criteria Met">NLI + LI Criteria Met</option>
-                    <option value="NLI Criteria Met">NLI Criteria Met</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Club Level (Controls Deco Lines)</label>
-                <select id="clubLevel" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="" disabled selected>Select Level</option>
-                    <option value="Level 1">Level 1 (5 Lines)</option>
-                    <option value="Level 2">Level 2 (7 Lines)</option>
-                </select>
-            </div>
-
-            <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Branch Name</label>
                 <input type="text" id="branchName" placeholder="Enter Branch Name (e.g. Patiala)" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
@@ -152,7 +134,7 @@
         </div>
 
         <div class="mt-8 pt-4 border-t border-gray-200 text-center text-sm font-medium text-gray-400">
-            <p>Version 4.0 | &copy; Made by MADHAV KALRA for Aditya Birla Health Insurance</p>
+            <p>Version 4.5 | &copy; Made by MADHAV KALRA for Aditya Birla Health Insurance</p>
         </div>
 
     </div>
@@ -171,10 +153,8 @@
         const rmDesignation = document.getElementById("rmDesignation");
         const otherDesignationContainer = document.getElementById("otherDesignationContainer");
         const otherDesignation = document.getElementById("otherDesignation");
-        const nliType = document.getElementById("nliType");
-        const clubLevel = document.getElementById("clubLevel");
         const branchName = document.getElementById("branchName");
-        const clusterName = document.getElementById("clusterName"); // Select element now
+        const clusterName = document.getElementById("clusterName");
         const premiumInput = document.getElementById("premium");
         const productType = document.getElementById("productType");
         
@@ -217,8 +197,8 @@
             resultContainer.classList.add("hidden");
             resultContainer.classList.remove("flex");
             form.classList.remove("hidden");
-            form.reset(); // Reset form fields
-            otherDesignationContainer.classList.add("hidden"); // Ensure hidden
+            form.reset(); 
+            otherDesignationContainer.classList.add("hidden"); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
@@ -227,7 +207,7 @@
             return new Promise((resolve) => {
                 const img = new Image();
                 img.onload = () => resolve(img);
-                img.onerror = () => resolve(null); // Return null if missing, prevents breaking
+                img.onerror = () => resolve(null); 
                 img.src = src;
             });
         };
@@ -248,7 +228,6 @@
             const reader = new FileReader();
             reader.onload = async function(ev){
                 
-                // Note: Ensure these assets exist in your ./assets/ folder
                 const [profileImg, hdfcLogo, abLogo] = await Promise.all([
                     loadImage(ev.target.result),
                     loadImage('./assets/hdfc-logo.PNG'), 
@@ -256,25 +235,23 @@
                 ]);
 
                 if (!hdfcLogo || !abLogo) {
-                    console.warn("Missing logo files in ./assets/ folder. Capitalization matters (.PNG vs .png).");
+                    console.warn("Missing logo files in ./assets/ folder.");
                 }
 
                 let designation = rmDesignation.value === "Others" 
                     ? otherDesignation.value 
                     : rmDesignation.value;
 
-                // Lookup CH Name based on selected Cluster
+                // Lookup CH Name
                 const selectedClusterKey = clusterName.value;
                 const derivedChName = clusterHeadMap[selectedClusterKey] || "";
 
                 drawPoster(profileImg, hdfcLogo, abLogo, {
                     rmName: rmName.value.toUpperCase(),
                     designation: designation,
-                    nli: nliType.value,
-                    level: clubLevel.value, // Still used to determine number of deco lines
                     branch: branchName.value,
                     cluster: selectedClusterKey,
-                    chName: derivedChName, // Passed to drawing function
+                    chName: derivedChName,
                     premium: premiumInput.value,
                     product: productType.value,
                     bmSalutation: bmSalutation.value,
@@ -300,7 +277,7 @@
             ctx.fillStyle = bg;
             ctx.fillRect(0,0,1080,1350);
 
-            /* --- Draw Golden Sparkles in Background --- */
+            /* Golden Sparkles */
             ctx.save();
             for (let i = 0; i < 80; i++) {
                 let x = Math.random() * 1080;
@@ -321,7 +298,7 @@
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0,0,1080,160);
 
-            /* Draw Logos Safely and Centered Vertically */
+            /* Logos */
             if(hdfcLogo){
                 let width = 200;
                 let height = (hdfcLogo.naturalHeight / hdfcLogo.naturalWidth) * width;
@@ -336,7 +313,7 @@
                 ctx.drawImage(abLogo, 800, yPos, width, height);
             }
 
-            /* Gold Gradient for text and frames */
+            /* Gold Gradient */
             const gold = ctx.createLinearGradient(0,0,1080,0);
             gold.addColorStop(0,"#d4af37");
             gold.addColorStop(0.5,"#fff5b1");
@@ -344,24 +321,21 @@
 
             ctx.textAlign = "center";
 
-            /* Title - CHANGED to "Healthy Friday Drive - Branch" */
-            let title = `Healthy Friday Drive - ${data.branch}`;
+            /* Static Title */
             ctx.fillStyle = gold;
-            ctx.font = "bold 60px Inter"; // Slightly smaller to fit longer branch names
-            ctx.fillText(title, 540, 260);
+            ctx.font = "bold 60px Inter"; 
+            ctx.fillText("Healthy Friday Drive - Patiala", 540, 260);
 
             /* Divider */
             ctx.fillStyle = "rgba(255,215,0,0.6)";
-            ctx.fillRect(250, 280, 580, 3); // Widened slightly for new title
+            ctx.fillRect(200, 280, 680, 3); 
 
-            /* NLI Criteria */
+            /* Static Subheading */
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 44px Inter";
-            ctx.fillText(data.nli, 540, 330);
+            ctx.fillText("Healthy Friday Champion", 540, 330);
 
-            /* =========================================
-                DYNAMIC ART DECO LINES (Based on Level)
-            ========================================= */
+            /* Art Deco Lines - Fixed to 7 Lines */
             ctx.save();
             ctx.strokeStyle = gold;
             ctx.lineCap = "round";
@@ -378,28 +352,15 @@
                 ctx.fill(); 
             };
 
-            let lines = [];
-            if (data.level === "Level 2") {
-                // 7 Lines
-                lines = [
-                    { yOffset: -120, length: 70,  width: 1.5 },
-                    { yOffset: -80,  length: 110, width: 2 },
-                    { yOffset: -40,  length: 160, width: 4 },
-                    { yOffset: 0,    length: 220, width: 6 },
-                    { yOffset: 40,   length: 160, width: 4 },
-                    { yOffset: 80,   length: 110, width: 2 },
-                    { yOffset: 120,  length: 70,  width: 1.5 }
-                ];
-            } else {
-                // 5 Lines (Default/Level 1)
-                lines = [
-                    { yOffset: -80, length: 100, width: 2 },
-                    { yOffset: -40, length: 150, width: 4 },
-                    { yOffset: 0,   length: 200, width: 6 },
-                    { yOffset: 40,  length: 150, width: 4 },
-                    { yOffset: 80,  length: 100, width: 2 }
-                ];
-            }
+            const lines = [
+                { yOffset: -120, length: 70,  width: 1.5 },
+                { yOffset: -80,  length: 110, width: 2 },
+                { yOffset: -40,  length: 160, width: 4 },
+                { yOffset: 0,    length: 220, width: 6 },
+                { yOffset: 40,   length: 160, width: 4 },
+                { yOffset: 80,   length: 110, width: 2 },
+                { yOffset: 120,  length: 70,  width: 1.5 }
+            ];
 
             const centerY = 600;
             const leftAnchor = 340; 
@@ -423,7 +384,7 @@
             });
             ctx.restore();
 
-            /* Profile Image inside Circle */
+            /* Profile Image */
             if(profile) {
                 ctx.save();
                 ctx.beginPath();
@@ -438,7 +399,7 @@
                 ctx.restore();
             }
 
-            /* Gold Frame around Profile */
+            /* Gold Frame */
             ctx.lineWidth = 10;
             ctx.strokeStyle = gold;
             ctx.beginPath();
@@ -454,12 +415,12 @@
             ctx.font = "bold 34px Inter";
             ctx.fillText("(" + data.designation + ")", 540, 945);
 
-            /* Branch and Cluster (Font size 32px, Bold) */
+            /* Branch and Cluster */
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 32px Inter";
             ctx.fillText("Branch: " + data.branch + " | Cluster: " + data.cluster, 540, 1000);
 
-            /* Premium Plate plate */
+            /* Premium Plate */
             ctx.fillStyle = "rgba(255,255,255,0.08)";
             ctx.fillRect(280, 1040, 520, 110);
             ctx.strokeStyle = "rgba(255,215,0,0.5)";
@@ -470,28 +431,68 @@
             ctx.font = "bold 80px Inter";
             ctx.fillText(data.premium, 540, 1120);
 
-            /* Product (Font size 32px, Bold) */
+            /* Product */
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 32px Inter";
-            ctx.fillText("Product: " + data.product, 540, 1210);
+            ctx.fillText("Product: " + data.product, 540, 1205);
 
-            /* Thank You Notes Section */
-            ctx.fillStyle = "#d4af37"; // Elegant Gold
-            ctx.font = "bold italic 24px Inter";
-
-            // 1. Branch Manager Thank You Note
-            let bmThanks = `Heartfelt thanks to BM ${data.bmSalutation} ${data.bmName} for Constant Motivation and Support`;
-            ctx.fillText(bmThanks, 540, 1265); // Moved up slightly to make room
-
-            // 2. CHANGED: New Cluster Head Thank You Note (Auto-filled)
-            if(data.chName) {
-                let chThanks = `Special thanks to CH ${data.chName} for Guidance and Mentorship`;
-                ctx.fillText(chThanks, 540, 1300); // Placed below BM note
+            /* Helper Function for Multi-styled Appreciation Lines */
+            function drawAppreciationLine(prefix, name, suffix, yPos, baseColor) {
+                ctx.textAlign = "left";
+                
+                // Measure sections
+                ctx.font = "italic 22px Inter";
+                let w1 = ctx.measureText(prefix).width;
+                
+                ctx.font = "bold italic 24px Inter";
+                let w2 = ctx.measureText(name).width;
+                
+                ctx.font = "italic 22px Inter";
+                let w3 = ctx.measureText(suffix).width;
+                
+                let totalWidth = w1 + w2 + w3;
+                let startX = 540 - (totalWidth / 2);
+                
+                // Draw Prefix
+                ctx.fillStyle = baseColor;
+                ctx.font = "italic 22px Inter";
+                ctx.fillText(prefix, startX, yPos);
+                
+                // Draw Bold Name (White for heavy contrast)
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold italic 24px Inter";
+                ctx.fillText(name, startX + w1, yPos);
+                
+                // Draw Suffix
+                ctx.fillStyle = baseColor;
+                ctx.font = "italic 22px Inter";
+                ctx.fillText(suffix, startX + w1 + w2, yPos);
+                
+                // Reset alignment
+                ctx.textAlign = "center"; 
             }
 
-            /* =========================================
-                STYLISH GOLDEN BORDERS 
-            ========================================= */
+            // Draw BM Line (Gold Base)
+            drawAppreciationLine(
+                "Heartfelt thanks to BM ", 
+                `${data.bmSalutation} ${data.bmName}`, 
+                " for Constant Motivation and Support", 
+                1260, 
+                "#d4af37" 
+            );
+
+            // Draw CH Line (Soft Platinum/Blue Base to differentiate)
+            if(data.chName) {
+                drawAppreciationLine(
+                    "Special thanks to CH ", 
+                    data.chName, 
+                    " for Guidance and Mentorship", 
+                    1295, 
+                    "#a8c7fa" 
+                );
+            }
+
+            /* Golden Borders */
             ctx.save();
             const borderGold = ctx.createLinearGradient(0, 0, 1080, 1350);
             borderGold.addColorStop(0, "#b8860b");   
@@ -505,12 +506,10 @@
             ctx.shadowBlur = 20;
             ctx.strokeStyle = borderGold;
 
-            // Outer Thick Border
             const outerBorderWidth = 20;
             ctx.lineWidth = outerBorderWidth;
             ctx.strokeRect(outerBorderWidth/2, outerBorderWidth/2, 1080 - outerBorderWidth, 1350 - outerBorderWidth);
 
-            // Inner Thin Border
             const innerBorderWidth = 4;
             const gap = 12; 
             const offset = outerBorderWidth + gap;
@@ -524,9 +523,7 @@
 
         downloadBtn.addEventListener("click", function(){
             const link = document.createElement("a");
-            // Dynamic filename based on Branch
-            const branch = branchName.value || "Poster";
-            link.download = `Healthy_Friday_Drive_${branch}.png`;
+            link.download = `Healthy_Friday_Drive_Patiala.png`;
             link.href = canvas.toDataURL("image/png");
             link.click();
         });
