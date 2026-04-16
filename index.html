@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Champions Club – Award Night Premium</title>
+    <title>Champions Club – Healthy Friday Drive</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -41,7 +41,7 @@
 
         <form id="posterForm" class="flex flex-col gap-5">
             <h1 class="text-3xl font-bold text-center text-blue-900 mb-2">
-                Champions Club – Award Night
+                Healthy Friday Drive
             </h1>
 
             <div>
@@ -80,22 +80,29 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Club Level</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Club Level (Controls Deco Lines)</label>
                 <select id="clubLevel" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="" disabled selected>Select Level</option>
-                    <option value="Level 1">Level 1</option>
-                    <option value="Level 2">Level 2</option>
+                    <option value="Level 1">Level 1 (5 Lines)</option>
+                    <option value="Level 2">Level 2 (7 Lines)</option>
                 </select>
             </div>
 
             <div>
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Branch Name</label>
-                <input type="text" id="branchName" placeholder="Enter Branch Name" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="branchName" placeholder="Enter Branch Name (e.g. Patiala)" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Cluster Name</label>
-                <input type="text" id="clusterName" placeholder="Enter Cluster Name" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Select Cluster (Auto-assigns CH)</label>
+                <select id="clusterName" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled selected>Select Cluster Location</option>
+                    <option value="Patiala 1">Patiala 1</option>
+                    <option value="Patiala 2">Patiala 2</option>
+                    <option value="Fatehgarh Sahib">Fatehgarh Sahib</option>
+                    <option value="Sangrur">Sangrur</option>
+                    <option value="Malerkotla">Malerkotla</option>
+                </select>
             </div>
 
             <div>
@@ -145,7 +152,7 @@
         </div>
 
         <div class="mt-8 pt-4 border-t border-gray-200 text-center text-sm font-medium text-gray-400">
-            <p>Version 3.7 | &copy; Made by MADHAV KALRA for Aditya Birla Health Insurance</p>
+            <p>Version 4.0 | &copy; Made by MADHAV KALRA for Aditya Birla Health Insurance</p>
         </div>
 
     </div>
@@ -167,12 +174,21 @@
         const nliType = document.getElementById("nliType");
         const clubLevel = document.getElementById("clubLevel");
         const branchName = document.getElementById("branchName");
-        const clusterName = document.getElementById("clusterName");
+        const clusterName = document.getElementById("clusterName"); // Select element now
         const premiumInput = document.getElementById("premium");
         const productType = document.getElementById("productType");
         
         const bmSalutation = document.getElementById("bmSalutation");
         const bmName = document.getElementById("bmName");
+
+        // --- Data Mapping for Cluster Heads ---
+        const clusterHeadMap = {
+            "Patiala 1": "Mr. Shakun Bansal",
+            "Patiala 2": "Mr. Sourav Aggarwal",
+            "Fatehgarh Sahib": "Mr. Anshuman Vashisht",
+            "Sangrur": "Mr. Sumesh Grover",
+            "Malerkotla": "Mr. Kamal Kakkar"
+        };
 
         // Format currency
         premiumInput.addEventListener("input", function(){
@@ -201,6 +217,8 @@
             resultContainer.classList.add("hidden");
             resultContainer.classList.remove("flex");
             form.classList.remove("hidden");
+            form.reset(); // Reset form fields
+            otherDesignationContainer.classList.add("hidden"); // Ensure hidden
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
@@ -230,6 +248,7 @@
             const reader = new FileReader();
             reader.onload = async function(ev){
                 
+                // Note: Ensure these assets exist in your ./assets/ folder
                 const [profileImg, hdfcLogo, abLogo] = await Promise.all([
                     loadImage(ev.target.result),
                     loadImage('./assets/hdfc-logo.PNG'), 
@@ -237,20 +256,25 @@
                 ]);
 
                 if (!hdfcLogo || !abLogo) {
-                    console.warn("Missing files. Check your assets folder and capitalization.");
+                    console.warn("Missing logo files in ./assets/ folder. Capitalization matters (.PNG vs .png).");
                 }
 
                 let designation = rmDesignation.value === "Others" 
                     ? otherDesignation.value 
                     : rmDesignation.value;
 
+                // Lookup CH Name based on selected Cluster
+                const selectedClusterKey = clusterName.value;
+                const derivedChName = clusterHeadMap[selectedClusterKey] || "";
+
                 drawPoster(profileImg, hdfcLogo, abLogo, {
                     rmName: rmName.value.toUpperCase(),
                     designation: designation,
                     nli: nliType.value,
-                    level: clubLevel.value,
+                    level: clubLevel.value, // Still used to determine number of deco lines
                     branch: branchName.value,
-                    cluster: clusterName.value,
+                    cluster: selectedClusterKey,
+                    chName: derivedChName, // Passed to drawing function
                     premium: premiumInput.value,
                     product: productType.value,
                     bmSalutation: bmSalutation.value,
@@ -320,15 +344,15 @@
 
             ctx.textAlign = "center";
 
-            /* Title */
-            let title = data.level === "Level 1" ? "BBH-Champions Club" : "GHMD-Champions Club";
+            /* Title - CHANGED to "Healthy Friday Drive - Branch" */
+            let title = `Healthy Friday Drive - ${data.branch}`;
             ctx.fillStyle = gold;
-            ctx.font = "bold 78px Inter";
+            ctx.font = "bold 60px Inter"; // Slightly smaller to fit longer branch names
             ctx.fillText(title, 540, 260);
 
             /* Divider */
             ctx.fillStyle = "rgba(255,215,0,0.6)";
-            ctx.fillRect(300, 280, 480, 3);
+            ctx.fillRect(250, 280, 580, 3); // Widened slightly for new title
 
             /* NLI Criteria */
             ctx.fillStyle = "#ffffff";
@@ -336,7 +360,7 @@
             ctx.fillText(data.nli, 540, 330);
 
             /* =========================================
-               DYNAMIC ART DECO LINES (5 or 7 Lines)
+                DYNAMIC ART DECO LINES (Based on Level)
             ========================================= */
             ctx.save();
             ctx.strokeStyle = gold;
@@ -345,7 +369,6 @@
             ctx.shadowBlur = 10;
             ctx.fillStyle = gold;
             
-            // Helper function to draw the gold diamonds at the end of the lines
             const drawDiamond = (x, y) => { 
                 ctx.beginPath(); 
                 ctx.moveTo(x, y-6); 
@@ -355,10 +378,9 @@
                 ctx.fill(); 
             };
 
-            // DYNAMIC CONFIGURATION: Check Level
             let lines = [];
             if (data.level === "Level 2") {
-                // 7 Lines for Level 2
+                // 7 Lines
                 lines = [
                     { yOffset: -120, length: 70,  width: 1.5 },
                     { yOffset: -80,  length: 110, width: 2 },
@@ -369,7 +391,7 @@
                     { yOffset: 120,  length: 70,  width: 1.5 }
                 ];
             } else {
-                // 5 Lines for Level 1
+                // 5 Lines (Default/Level 1)
                 lines = [
                     { yOffset: -80, length: 100, width: 2 },
                     { yOffset: -40, length: 150, width: 4 },
@@ -387,14 +409,12 @@
                 let currentY = centerY + line.yOffset;
                 ctx.lineWidth = line.width;
                 
-                // Left side
                 ctx.beginPath(); 
                 ctx.moveTo(leftAnchor - line.length, currentY); 
                 ctx.lineTo(leftAnchor, currentY); 
                 ctx.stroke();
                 drawDiamond(leftAnchor - line.length, currentY);
 
-                // Right side
                 ctx.beginPath(); 
                 ctx.moveTo(rightAnchor, currentY); 
                 ctx.lineTo(rightAnchor + line.length, currentY); 
@@ -402,7 +422,6 @@
                 drawDiamond(rightAnchor + line.length, currentY);
             });
             ctx.restore();
-            /* ========================================= */
 
             /* Profile Image inside Circle */
             if(profile) {
@@ -456,55 +475,58 @@
             ctx.font = "bold 32px Inter";
             ctx.fillText("Product: " + data.product, 540, 1210);
 
-            /* Branch Manager Thank You Note (Font size 24px, Bold Italic) */
+            /* Thank You Notes Section */
             ctx.fillStyle = "#d4af37"; // Elegant Gold
             ctx.font = "bold italic 24px Inter";
+
+            // 1. Branch Manager Thank You Note
             let bmThanks = `Heartfelt thanks to BM ${data.bmSalutation} ${data.bmName} for Constant Motivation and Support`;
-            ctx.fillText(bmThanks, 540, 1270);
+            ctx.fillText(bmThanks, 540, 1265); // Moved up slightly to make room
+
+            // 2. CHANGED: New Cluster Head Thank You Note (Auto-filled)
+            if(data.chName) {
+                let chThanks = `Special thanks to CH ${data.chName} for Guidance and Mentorship`;
+                ctx.fillText(chThanks, 540, 1300); // Placed below BM note
+            }
 
             /* =========================================
-               STYLISH GOLDEN BORDERS 
+                STYLISH GOLDEN BORDERS 
             ========================================= */
             ctx.save();
-
-            // 1. Create a Metallic Gold Gradient for the borders
             const borderGold = ctx.createLinearGradient(0, 0, 1080, 1350);
-            borderGold.addColorStop(0, "#b8860b");   // Dark Goldenrod
-            borderGold.addColorStop(0.2, "#d4af37");  // Metallic Gold
-            borderGold.addColorStop(0.4, "#ffd700");  // Bright Gold
-            borderGold.addColorStop(0.6, "#fffacd");  // LemonChiffon highlight
-            borderGold.addColorStop(0.8, "#d4af37");  // Metallic GoldBack
-            borderGold.addColorStop(1, "#b8860b");    // Dark finish
+            borderGold.addColorStop(0, "#b8860b");   
+            borderGold.addColorStop(0.2, "#d4af37");  
+            borderGold.addColorStop(0.4, "#ffd700");  
+            borderGold.addColorStop(0.6, "#fffacd");  
+            borderGold.addColorStop(0.8, "#d4af37");  
+            borderGold.addColorStop(1, "#b8860b");    
 
-            // Add a golden glow shadow to the borders
             ctx.shadowColor = "#d4af37";
             ctx.shadowBlur = 20;
-            
             ctx.strokeStyle = borderGold;
 
-            // 2. Draw Outer Thick Border (20px wide)
+            // Outer Thick Border
             const outerBorderWidth = 20;
             ctx.lineWidth = outerBorderWidth;
-            // Offset by half the width so the stroke doesn't get cut off by canvas edge
             ctx.strokeRect(outerBorderWidth/2, outerBorderWidth/2, 1080 - outerBorderWidth, 1350 - outerBorderWidth);
 
-            // 3. Draw Inner Thin Border (4px wide) to create a double-frame look
+            // Inner Thin Border
             const innerBorderWidth = 4;
-            const gap = 12; // Gap between outer and inner border
+            const gap = 12; 
             const offset = outerBorderWidth + gap;
             
-            // Reduce shadow for inner border for cleaner look
             ctx.shadowBlur = 5; 
             ctx.lineWidth = innerBorderWidth;
             ctx.strokeRect(offset + innerBorderWidth/2, offset + innerBorderWidth/2, 1080 - (offset*2) - innerBorderWidth, 1350 - (offset*2) - innerBorderWidth);
 
             ctx.restore();
-            /* ========================================= */
         }
 
         downloadBtn.addEventListener("click", function(){
             const link = document.createElement("a");
-            link.download = "Champions_Club_Award_Night.png";
+            // Dynamic filename based on Branch
+            const branch = branchName.value || "Poster";
+            link.download = `Healthy_Friday_Drive_${branch}.png`;
             link.href = canvas.toDataURL("image/png");
             link.click();
         });
