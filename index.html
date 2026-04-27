@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthy Friday Drive - Patiala</title>
+    <title>Fresh Health Champ - Congratulations Poster</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -41,7 +41,7 @@
 
         <form id="posterForm" class="flex flex-col gap-5">
             <h1 class="text-3xl font-bold text-center text-blue-900 mb-2">
-                Healthy Friday Drive
+                Fresh Health Champ
             </h1>
 
             <div>
@@ -76,15 +76,13 @@
             </div>
 
             <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Select Cluster (Auto-assigns CH)</label>
-                <select id="clusterName" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="" disabled selected>Select Cluster Location</option>
-                    <option value="Patiala 1">Patiala 1</option>
-                    <option value="Patiala 2">Patiala 2</option>
-                    <option value="Fatehgarh Sahib">Fatehgarh Sahib</option>
-                    <option value="Sangrur">Sangrur</option>
-                    <option value="Malerkotla">Malerkotla</option>
-                </select>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Cluster Location</label>
+                <input type="text" id="clusterName" placeholder="Enter Cluster (e.g. Patiala 1)" required class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">CH Name (Optional - Fill anything)</label>
+                <input type="text" id="chNameInput" placeholder="Enter CH Name or message" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <div>
@@ -134,7 +132,7 @@
         </div>
 
         <div class="mt-8 pt-4 border-t border-gray-200 text-center text-sm font-medium text-gray-400">
-            <p>Version 4.5 | &copy; Made by MADHAV KALRA for Aditya Birla Health Insurance</p>
+            <p>Version 4.6 | &copy; Made by MADHAV KALRA for Aditya Birla Health Insurance</p>
         </div>
 
     </div>
@@ -155,20 +153,12 @@
         const otherDesignation = document.getElementById("otherDesignation");
         const branchName = document.getElementById("branchName");
         const clusterName = document.getElementById("clusterName");
+        const chNameInput = document.getElementById("chNameInput");
         const premiumInput = document.getElementById("premium");
         const productType = document.getElementById("productType");
         
         const bmSalutation = document.getElementById("bmSalutation");
         const bmName = document.getElementById("bmName");
-
-        // --- Data Mapping for Cluster Heads ---
-        const clusterHeadMap = {
-            "Patiala 1": "Mr. Shakun Bansal",
-            "Patiala 2": "Mr. Sourav Aggarwal",
-            "Fatehgarh Sahib": "Mr. Anshuman Vashisht",
-            "Sangrur": "Mr. Sumesh Grover",
-            "Malerkotla": "Mr. Kamal Kakkar"
-        };
 
         // Format currency
         premiumInput.addEventListener("input", function(){
@@ -242,16 +232,12 @@
                     ? otherDesignation.value 
                     : rmDesignation.value;
 
-                // Lookup CH Name
-                const selectedClusterKey = clusterName.value;
-                const derivedChName = clusterHeadMap[selectedClusterKey] || "";
-
                 drawPoster(profileImg, hdfcLogo, abLogo, {
                     rmName: rmName.value.toUpperCase(),
                     designation: designation,
                     branch: branchName.value,
-                    cluster: selectedClusterKey,
-                    chName: derivedChName,
+                    cluster: clusterName.value,
+                    chName: chNameInput.value, // Now taken directly from the visible, editable input
                     premium: premiumInput.value,
                     product: productType.value,
                     bmSalutation: bmSalutation.value,
@@ -321,19 +307,19 @@
 
             ctx.textAlign = "center";
 
-            /* Static Title */
+            /* NEW Static Title */
             ctx.fillStyle = gold;
-            ctx.font = "bold 60px Inter"; 
-            ctx.fillText("Healthy Friday Drive - Patiala", 540, 260);
+            ctx.font = "bold 80px Inter"; // Increased size for Congratulations
+            ctx.fillText("Congratulations", 540, 260);
 
             /* Divider */
             ctx.fillStyle = "rgba(255,215,0,0.6)";
             ctx.fillRect(200, 280, 680, 3); 
 
-            /* Static Subheading */
+            /* NEW Static Subheading */
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 44px Inter";
-            ctx.fillText("Healthy Friday Champion", 540, 330);
+            ctx.fillText("Fresh Health Champ", 540, 330);
 
             /* Art Deco Lines - Fixed to 7 Lines */
             ctx.save();
@@ -482,15 +468,14 @@
             );
 
             // Draw CH Line (Soft Platinum/Blue Base to differentiate)
-            if(data.chName) {
-                drawAppreciationLine(
-                    "Special thanks to CH ", 
-                    data.chName, 
-                    " for Guidance and Mentorship", 
-                    1295, 
-                    "#a8c7fa" 
-                );
-            }
+            // Modified to always draw the text from input, even if empty, allowing the placeholder or custom message
+            drawAppreciationLine(
+                "Special thanks to CH ", 
+                data.chName, 
+                " for Guidance and Mentorship", 
+                1295, 
+                "#a8c7fa" 
+            );
 
             /* Golden Borders */
             ctx.save();
@@ -523,7 +508,7 @@
 
         downloadBtn.addEventListener("click", function(){
             const link = document.createElement("a");
-            link.download = `Healthy_Friday_Drive_Patiala.png`;
+            link.download = `Congratulations_Fresh_Health_Champ.png`;
             link.href = canvas.toDataURL("image/png");
             link.click();
         });
